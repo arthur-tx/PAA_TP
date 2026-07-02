@@ -3,7 +3,7 @@ import collections
 import os
 
 def main():
-    results_file = "results_examples.csv"
+    results_file = "results_experiments.csv"
     if not os.path.exists(results_file):
         print("Results file not found. Run benchmark first.")
         return
