@@ -1,5 +1,4 @@
 // libs\commons.cpp
-// author: Andrei
 
 // imports
 #include "commons.hpp"

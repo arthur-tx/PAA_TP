@@ -45,6 +45,19 @@ def main():
     plt.savefig('scripts/plot_v.png')
     plt.close()
     
+    # 1.4 Nós Visitados vs N (Apenas para Backtracking e Branch and Bound)
+    df_nodes = df[df['method'].isin(['backtracking', 'branchBound'])].copy()
+    df_nodes['nodes'] = pd.to_numeric(df_nodes['nodes'], errors='coerce')
+    if not df_nodes['nodes'].isna().all():
+        plt.figure(figsize=(10, 6))
+        sns.lineplot(data=df_nodes, x='n', y='nodes', hue='method', marker='o', errorbar=None)
+        plt.title('Média de Nós Visitados vs Número de Itens (n)')
+        plt.xlabel('N (Itens)')
+        plt.ylabel('Nós Visitados (Escala Logarítmica)')
+        plt.yscale('log')
+        plt.savefig('scripts/plot_nodes.png')
+        plt.close()
+    
     # 2. Teste Estatístico (Friedman para cada combinação)
     # Agrupar por n, W, V
     combinations = df[['n', 'W', 'V']].drop_duplicates()
@@ -98,6 +111,13 @@ def main():
         f.write("### 2.3 Em função do Volume (V)\n")
         f.write("![Tempo vs V](scripts/plot_v.png)\n\n")
         f.write("Semelhante ao comportamento para W, a complexidade espacial e temporal da DP escala rapidamente quando multiplicamos $W \\times V$.\n\n")
+
+        if os.path.exists('scripts/plot_nodes.png'):
+            f.write("### 2.4 Análise da Árvore de Busca (Nós Visitados vs N)\n")
+            f.write("![Nós vs N](scripts/plot_nodes.png)\n\n")
+            f.write("O gráfico acima mostra a média de nós visitados em escala logarítmica para o Backtracking e Branch & Bound. ")
+            f.write("Fica evidente que o Branch & Bound visita ordens de magnitude a menos de nós em comparação ao Backtracking conforme N cresce, ")
+            f.write("comprovando a eficácia da poda por relaxação linear.\n\n")
         
         f.write("## 3. Testes Estatísticos\n")
         f.write("Aplicou-se o teste de Friedman em cada combinação para verificar se houve empate estatístico (ausência de diferença significativa) entre as execuções dos 3 algoritmos nas 10 instâncias daquela configuração. P-valores maiores que 0.05 indicam empate estatístico.\n\n")

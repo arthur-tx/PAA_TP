@@ -19,10 +19,10 @@ def main():
     data_dir = "data/experiments"
     os.makedirs(data_dir, exist_ok=True)
     
-    # Grid of parameters
-    N_values = [10, 15, 20, 25]
-    W_values = [100, 250, 500]
-    V_values = [100, 250, 500]
+    # Grid of parameters (10 * 10 * 10 = 1000 combinações)
+    N_values = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28]
+    W_values = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
+    V_values = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
     
     # 10 instances per combination
     num_instances = 10

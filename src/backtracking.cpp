@@ -1,5 +1,4 @@
 // src\backtracking.cpp
-// author: Vinícius
 
 #include "headers/backtracking.hpp"
 

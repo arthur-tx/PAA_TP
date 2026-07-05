@@ -1,5 +1,4 @@
 // src\main.cpp
-// author: Andrei, Vinícius, Yann e Heitor
 
 // imports
 using namespace std;

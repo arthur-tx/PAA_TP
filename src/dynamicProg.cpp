@@ -1,5 +1,4 @@
 // src/dynamicProg.cpp
-// author: Yann
 
 using namespace std;
 

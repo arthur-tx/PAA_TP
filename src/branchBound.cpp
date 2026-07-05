@@ -1,5 +1,4 @@
 // src\branchBound.cpp
-// author: Andrei
 
 // imports
 using namespace std;

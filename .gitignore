@@ -1,0 +1,6 @@
+data/experiments/
+venv/
+bin/
+obj/
+*.exe
+__pycache__/
