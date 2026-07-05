@@ -15,10 +15,10 @@ int solve_knapsack_dp(const Problem &p, vector<int>& selected_items, double& tem
 
     auto start = chrono::high_resolution_clock::now();
 
-    // Matrizona da DP (tamanho W+1 por V+1, feita em 2D pra não estourar a RAM do PC)
+    // Matriz da DP (2D para otimizar o uso de memoria)
     vector<vector<int>> dp(W + 1, vector<int>(V + 1, 0));
     
-    // Gambiarra com bool pra salvar quem entrou na mochila sem gastar tanta memoria (usar bit é gain)
+    // Matriz 3D de booleanos para reconstruir a solucao sem gastar memoria excessiva
     vector<vector<vector<bool>>> keep(n, vector<vector<bool>>(W + 1, vector<bool>(V + 1, false)));
 
     // percorre todos itens
@@ -27,7 +27,7 @@ int solve_knapsack_dp(const Problem &p, vector<int>& selected_items, double& tem
         int volume_item = static_cast<int>(itens[i].volume);
         int value_item = static_cast<int>(itens[i].value);
 
-        // Loop de trás pra frente padrão de DP pra reaproveitar a linha (dica da aula)
+        // Iteracao de tras para frente para reaproveitar a mesma linha da matriz
         for (int weight_cap = W; weight_cap >= weigth_item; --weight_cap) {
             for (int volume_cap = V; volume_cap >= volume_item; --volume_cap) {
                 int profit_item = dp[weight_cap - weigth_item][volume_cap - volume_item] + value_item;
@@ -39,7 +39,7 @@ int solve_knapsack_dp(const Problem &p, vector<int>& selected_items, double& tem
         }
     }
 
-    // Agora faz o caminho de volta pra descobrir quais itens entraram na solucao
+    // Reconstroi o caminho para achar os itens selecionados
     selected_items.clear();
     int curr_w = W;
     int curr_v = V;
@@ -74,7 +74,7 @@ bool method_dynamicProg(FILE* file) {
 
     int lucro_max = solve_knapsack_dp(problem, selected, tempo);
 
-    // Soma peso e volume usados só pra poder printar bonito no final
+    // Soma peso e volume final para exibicao
     int peso_usado = 0, volume_usado = 0;
     for (int idx : selected) {
         const Item& it = problem.vector_itens[idx];
