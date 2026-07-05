@@ -6,7 +6,7 @@ using namespace std;
 
 #define DEBBUG 0
 
-// gerador da solução inicial (de maneira gulosa).
+// Guloso inicial pra já ter uma solucao base (ajuda muito a podar a arvore depois)
 bool generates_initial_solution(const Problem &p, Solution &s_best, vector<Density_Itens> &d){
     Density_Itens temp;
     size_t i = 0;
@@ -29,7 +29,7 @@ bool generates_initial_solution(const Problem &p, Solution &s_best, vector<Densi
     double cur_w = 0, cur_v = 0, total_value = 0;
     for(int j = 0; j < p.qntd_itens; j++) s_best.vetor[j] = false;
 
-    // passamos adicionando o maximo de item inteiro possível na solução inicial baseado na fração dos itens.
+    // Vai tacando item inteiro na mochila ate ela chorar (bater no limite)
     for(auto &item : d) {
         if((cur_w + p.vector_itens[item.id].weight <= p.backpack_w) && (cur_v + p.vector_itens[item.id].volume <= p.backpack_v)) {
             total_value += p.vector_itens[item.id].value;
@@ -50,7 +50,7 @@ bool generates_initial_solution(const Problem &p, Solution &s_best, vector<Densi
     return true;
 }
 
-// verifica se a solução parcial é promissora
+// Testa se esse galho da arvore vale a pena (calcula o upper bound da mochila fracionaria)
 bool is_promising(const Problem &p, int level, double cur_w, double cur_v, double cur_val, double best_val, const vector<Density_Itens>& d){
     double bound = cur_val;
     double rw = p.backpack_w - cur_w;
@@ -68,7 +68,7 @@ bool is_promising(const Problem &p, int level, double cur_w, double cur_v, doubl
             rv -= item.volume;
             bound += item.value;
         } else {
-            // de contrario trate como fracionario, preencha o espaço (se possível) e encerra
+            // se nao couber inteiro, taca a fracao do item so pra calcular o bound ideal e quebra o laco
             double frac_w = (item.weight > 0) ? rw / item.weight : 0;
             double frac_v = (item.volume > 0) ? rv / item.volume : 0;
             double fraction = min((double)1.0, min(frac_w, frac_v));
@@ -93,7 +93,7 @@ bool is_consistent(const Problem &p, double cur_w, double cur_v){
 
 void solve(int level, const Problem &p, double cur_w, double cur_v, double cur_val, Solution &s_curr, Solution &s_best, const vector<Density_Itens>& d) {
 
-    // Poda por Inconsistência: Se ultrapassou peso ou volume
+    // Deu ruim: se a mochila estourou o peso ou volume, nem continua
     if (!is_consistent(p, cur_w, cur_v)) return;
 
     // Atualização do Ótimo
@@ -105,7 +105,7 @@ void solve(int level, const Problem &p, double cur_w, double cur_v, double cur_v
     // Se já decidimos sobre todos os itens
     if (is_complete(p, level)) return;
 
-    // Poda por promessa: Se o potencial máximo deste ramo não supera o melhor lucro atual
+    // Se o teto desse ramo for pior q o q a gente ja achou, corta o ramo fora (Pruning salvador)
     if (!is_promising(p, level, cur_w, cur_v, cur_val, s_best.value, d)) {
         return;
     }

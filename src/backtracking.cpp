@@ -49,7 +49,7 @@ Solution BacktrackingSolver::greedy_solution(const Problem &p) {
     double cur_w = 0;
     double cur_v = 0;
     
-    // Algoritmo guloso: pega itens em ordem de densidade enquanto couber
+    // Guloso basicao: soca itens ordenados ate nao caber mais
     for (const auto &item_ord : ordered_items) {
         int id = item_ord.id;
         const Item &item = p.vector_itens[id];
@@ -71,7 +71,7 @@ void BacktrackingSolver::backtrack(int level, const Problem &p, double cur_w, do
                                    vector<bool> &current_sol, Solution &best_sol, const vector<ItemOrdenado> &ordered_items) {
     nos_visitados++;
     
-    // Poda por inviabilidade: se ultrapassou capacidade, volta
+    // Bateu no limite da mochila, faz o backtrack (volta pro pai)
     if (!is_consistent(p, cur_w, cur_v)) {
         return;
     }
@@ -91,7 +91,7 @@ void BacktrackingSolver::backtrack(int level, const Problem &p, double cur_w, do
     int real_id = ordered_items[level].id;
     const Item &item = p.vector_itens[real_id];
     
-    // RAMO 1: Incluir o item
+    // Opcao 1: Poe o item na bag e ve no que da
     current_sol[real_id] = true;
     backtrack(level + 1, p,
               cur_w + item.weight,
@@ -102,7 +102,7 @@ void BacktrackingSolver::backtrack(int level, const Problem &p, double cur_w, do
     // Desfazer escolha
     current_sol[real_id] = false;
     
-    // RAMO 2: Não incluir o item
+    // Opcao 2: Finge q o item nao existe e segue a vida
     backtrack(level + 1, p,
               cur_w, cur_v, cur_val,
               current_sol, best_sol, ordered_items);
@@ -116,7 +116,7 @@ Solution BacktrackingSolver::execute_backtracking(const Problem &p, long long &n
     best_sol.vetor.resize(p.qntd_itens, false);
     best_sol.value = 0;
     
-    // Inicia com solução gulosa como limite inferior (melhora performance)
+    // Taca a solucao gulosa de limite logo de cara pq alivia mto a arvore
     Solution greedy_sol = greedy_solution(p);
     if (greedy_sol.value > best_sol.value) {
         best_sol = greedy_sol;

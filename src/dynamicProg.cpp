@@ -15,10 +15,10 @@ int solve_knapsack_dp(const Problem &p, vector<int>& selected_items, double& tem
 
     auto start = chrono::high_resolution_clock::now();
 
-    // Tabela de valores (2D para economizar memória)
+    // Matrizona da DP (tamanho W+1 por V+1, feita em 2D pra não estourar a RAM do PC)
     vector<vector<int>> dp(W + 1, vector<int>(V + 1, 0));
     
-    // Tabela de decisões (3D, mas usando bool/bits para ser 32x mais leve que int)
+    // Gambiarra com bool pra salvar quem entrou na mochila sem gastar tanta memoria (usar bit é gain)
     vector<vector<vector<bool>>> keep(n, vector<vector<bool>>(W + 1, vector<bool>(V + 1, false)));
 
     // percorre todos itens
@@ -27,7 +27,7 @@ int solve_knapsack_dp(const Problem &p, vector<int>& selected_items, double& tem
         int volume_item = static_cast<int>(itens[i].volume);
         int value_item = static_cast<int>(itens[i].value);
 
-        // Percorremos de trás para frente para usar a mesma linha da DP
+        // Loop de trás pra frente padrão de DP pra reaproveitar a linha (dica da aula)
         for (int weight_cap = W; weight_cap >= weigth_item; --weight_cap) {
             for (int volume_cap = V; volume_cap >= volume_item; --volume_cap) {
                 int profit_item = dp[weight_cap - weigth_item][volume_cap - volume_item] + value_item;
@@ -39,7 +39,7 @@ int solve_knapsack_dp(const Problem &p, vector<int>& selected_items, double& tem
         }
     }
 
-    // Reconstrução da solução
+    // Agora faz o caminho de volta pra descobrir quais itens entraram na solucao
     selected_items.clear();
     int curr_w = W;
     int curr_v = V;
@@ -74,7 +74,7 @@ bool method_dynamicProg(FILE* file) {
 
     int lucro_max = solve_knapsack_dp(problem, selected, tempo);
 
-    // Cálculo do peso e volume usados (para exibir)
+    // Soma peso e volume usados só pra poder printar bonito no final
     int peso_usado = 0, volume_usado = 0;
     for (int idx : selected) {
         const Item& it = problem.vector_itens[idx];
